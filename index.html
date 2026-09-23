@@ -2,68 +2,191 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>מפת הפסיכואנליזה</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>מפת התפתחות החשיבה הפסיכואנליטית</title>
 <style>
-:root{--bg:#f7f6f2;--card:#fff;--text:#242424;--muted:#6e6b65;--line:#c9c5bd;--accent:#335c67;--soft:#e9f0f1}
-*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
-main{max-width:1050px;margin:auto;padding:22px 14px 40px} h1{font-size:25px;margin:0 0 6px}.lead{color:var(--muted);margin:0 0 18px}
-.map{overflow-x:auto;background:#fff;border:1px solid #ddd8cf;border-radius:18px;padding:10px}
-svg{display:block;min-width:850px;width:100%;height:auto}.edge{fill:none;stroke:var(--line);stroke-width:2}.dash{stroke-dasharray:6 5}
-.node{cursor:pointer}.node rect{fill:var(--card);stroke:var(--line);stroke-width:1.5}.node text{fill:var(--text);font-family:inherit;pointer-events:none}
-.node.active rect{fill:var(--soft);stroke:var(--accent);stroke-width:3}
-.detail{margin-top:16px;background:#fff;border:1px solid #ddd8cf;border-radius:18px;padding:18px}.top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
-h2{font-size:21px;margin:0}.years{color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
-h3{font-size:14px;margin:0 0 5px}.detail p{margin:0;line-height:1.55}.books{margin:6px 0 0;padding-right:20px;line-height:1.55}
-.note{font-size:13px;color:var(--muted);margin-top:12px}.legend{font-size:12px;color:var(--muted);text-align:center;margin-top:7px}
-@media(max-width:650px){.grid{grid-template-columns:1fr}h1{font-size:22px}}
+:root{--ink:#181818;--muted:#666;--soft:#aaa;--paper:#fff;--wash:#f5f5f5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+header{text-align:center;padding:24px 10px 6px}
+h1{font-size:25px;margin:0 0 4px} header p{margin:0;color:var(--muted);font-size:14px}
+.note{text-align:center;color:var(--muted);font-size:12px;margin:9px 0 3px}
+.page{max-width:820px;margin:auto;padding:0 8px 40px}
+.map{position:relative;width:100%;height:1370px;margin:auto;overflow:hidden}
+.axis{position:absolute;left:33px;top:76px;bottom:55px;border-left:1.5px solid var(--ink)}
+.tick{position:absolute;left:28px;right:4px;border-top:1px dotted #c4c4c4;font-size:10px;color:var(--muted);z-index:0}
+.tick span{position:absolute;left:-22px;top:-8px;background:#fff;padding:0 3px}
+svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+svg path{fill:none;stroke:#555;stroke-width:1.2;vector-effect:non-scaling-stroke}
+svg .influence{stroke:#999;stroke-dasharray:5 5}
+.branch,.node{position:absolute;transform:translateX(-50%);background:#fff;text-align:center;z-index:3}
+.branch{width:16.5%;min-width:102px;border:1px solid #888;border-radius:7px;padding:7px 3px;font-size:10px;font-weight:700}
+.node{width:15.5%;min-width:98px;border:1px solid #555;border-radius:8px;padding:7px 4px;color:var(--ink);font:inherit;cursor:pointer;min-height:50px}
+.node strong{display:block;font-size:11px;line-height:1.18}
+.node small{display:block;font-size:9.5px;color:var(--muted);margin-top:4px;line-height:1.15}
+.node:focus-visible{outline:3px solid #aaa;outline-offset:2px}
+.node.active{border:2px solid #111;background:var(--wash)}
+.legend{text-align:center;color:var(--muted);font-size:10px;margin:0 0 10px}
+dialog{width:min(680px,calc(100% - 24px));border:1px solid #555;border-radius:12px;padding:0;background:#fff;color:var(--ink);box-shadow:0 12px 45px rgba(0,0,0,.16)}
+dialog::backdrop{background:rgba(0,0,0,.18)}
+.modal{padding:20px}
+.modal-top{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+.modal h2{font-size:21px;margin:0}.period{font-size:12px;color:var(--muted);margin-top:3px}
+.close{border:1px solid #777;background:#fff;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 25px;margin-top:18px}
+.grid h3{font-size:13px;margin:0 0 5px}.grid p{font-size:14px;line-height:1.55;margin:0}
+.refs{color:#555}
+@media(max-width:600px){
+ h1{font-size:20px}.page{padding:0 3px 30px}.map{height:1280px}
+ .axis{left:24px}.tick{left:20px}.tick span{left:-17px}
+ .branch{min-width:78px;font-size:8.5px;padding:6px 2px}
+ .node{min-width:76px;font-size:9px;padding:6px 2px;min-height:46px}
+ .node strong{font-size:9.5px}.node small{font-size:8px}
+ .grid{grid-template-columns:1fr}
+}
 </style>
 </head>
-<body><main>
-<h1>מפת התפתחות החשיבה הפסיכואנליטית</h1>
-<p class="lead">מפת ניווט פשוטה. לחץ על אסכולה או הוגה כדי לפתוח את הרעיון המרכזי והקריאה הבסיסית.</p>
+<body>
+<header><h1>מפת התפתחות החשיבה הפסיכואנליטית</h1><p>מן המקורות אל ההמשכים</p></header>
+<div class="page">
+<div class="note">לחץ על הוגה לפתיחת שכבת עומק · הגובה משקף בקירוב את תקופת התרומה המרכזית</div>
 <div class="map">
-<svg viewBox="0 0 1000 530" aria-label="עץ התפתחות הפסיכואנליזה">
-<path class="edge" d="M500 65V105M500 155V205"/>
-<path class="edge" d="M500 205C500 225 100 220 100 255M500 205C500 225 300 220 300 255M500 205C500 225 500 220 500 255M500 205C500 225 700 220 700 255M500 205C500 225 900 220 900 255"/>
-<path class="edge" d="M100 305V370M300 305V370M500 305V370M700 305V370M900 305V370"/>
-<path class="edge dash" d="M330 400C410 455 455 455 475 400M525 400C610 465 665 455 675 400M725 400C790 455 855 445 875 400"/>
-<g class="node" data-id="roots" tabindex="0"><rect x="415" y="20" width="170" height="45" rx="12"/><text x="500" y="47" text-anchor="middle" font-size="14" font-weight="700">שורשים: היסטריה וטראומה</text></g>
-<g class="node" data-id="freud" tabindex="0"><rect x="400" y="105" width="200" height="50" rx="12"/><text x="500" y="128" text-anchor="middle" font-size="16" font-weight="700">פרויד</text><text x="500" y="146" text-anchor="middle" font-size="11">דחף • קונפליקט • לא־מודע</text></g>
-<g class="node" data-id="ego" tabindex="0"><rect x="25" y="255" width="150" height="50" rx="11"/><text x="100" y="277" text-anchor="middle" font-size="13" font-weight="700">פסיכולוגיית האגו</text><text x="100" y="295" text-anchor="middle" font-size="10">הגנות • הסתגלות</text></g>
-<g class="node" data-id="klein" tabindex="0"><rect x="225" y="255" width="150" height="50" rx="11"/><text x="300" y="277" text-anchor="middle" font-size="13" font-weight="700">קליין</text><text x="300" y="295" text-anchor="middle" font-size="10">פנטזיה • פיצול</text></g>
-<g class="node" data-id="object" tabindex="0"><rect x="425" y="255" width="150" height="50" rx="11"/><text x="500" y="277" text-anchor="middle" font-size="13" font-weight="700">יחסי אובייקט</text><text x="500" y="295" text-anchor="middle" font-size="10">קשר • עולם פנימי</text></g>
-<g class="node" data-id="lacan" tabindex="0"><rect x="625" y="255" width="150" height="50" rx="11"/><text x="700" y="277" text-anchor="middle" font-size="13" font-weight="700">לאקאן</text><text x="700" y="295" text-anchor="middle" font-size="10">שפה • חסר • האחר</text></g>
-<g class="node" data-id="attach" tabindex="0"><rect x="825" y="255" width="150" height="50" rx="11"/><text x="900" y="277" text-anchor="middle" font-size="13" font-weight="700">בולבי / התקשרות</text><text x="900" y="295" text-anchor="middle" font-size="10">ביטחון • IWM</text></g>
-<g class="node" data-id="bion" tabindex="0"><rect x="25" y="370" width="150" height="50" rx="11"/><text x="100" y="392" text-anchor="middle" font-size="13" font-weight="700">ביון</text><text x="100" y="410" text-anchor="middle" font-size="10">הכלה • חשיבה</text></g>
-<g class="node" data-id="winn" tabindex="0"><rect x="225" y="370" width="150" height="50" rx="11"/><text x="300" y="392" text-anchor="middle" font-size="13" font-weight="700">ויניקוט</text><text x="300" y="410" text-anchor="middle" font-size="10">holding • play • self</text></g>
-<g class="node" data-id="kohut" tabindex="0"><rect x="425" y="370" width="150" height="50" rx="11"/><text x="500" y="392" text-anchor="middle" font-size="13" font-weight="700">קוהוט</text><text x="500" y="410" text-anchor="middle" font-size="10">Self Psychology</text></g>
-<g class="node" data-id="kern" tabindex="0"><rect x="625" y="370" width="150" height="50" rx="11"/><text x="700" y="392" text-anchor="middle" font-size="13" font-weight="700">קרנברג</text><text x="700" y="410" text-anchor="middle" font-size="10">זהות • פיצול • ארגון</text></g>
-<g class="node" data-id="mental" tabindex="0"><rect x="825" y="370" width="150" height="50" rx="11"/><text x="900" y="392" text-anchor="middle" font-size="13" font-weight="700">מנטליזציה</text><text x="900" y="410" text-anchor="middle" font-size="10">Fonagy • Bateman</text></g>
-<g class="node" data-id="rel" tabindex="0"><rect x="425" y="465" width="150" height="50" rx="11"/><text x="500" y="487" text-anchor="middle" font-size="13" font-weight="700">Relational</text><text x="500" y="505" text-anchor="middle" font-size="10">Mitchell • Greenberg</text></g>
-</svg><div class="legend">קווים מקווקווים = השפעות והצטלבויות; זו מפת התמצאות, לא אילן יוחסין קשיח.</div>
+<div class="axis"></div>
+<div class="tick" style="top:90px"><span>1900</span></div>
+<div class="tick" style="top:300px"><span>1920</span></div>
+<div class="tick" style="top:510px"><span>1940</span></div>
+<div class="tick" style="top:720px"><span>1960</span></div>
+<div class="tick" style="top:930px"><span>1980</span></div>
+<div class="tick" style="top:1140px"><span>2000</span></div>
+<div class="tick" style="top:1325px"><span>היום</span></div>
+
+<!-- Lines are deliberately routed through whitespace and terminate at box edges. -->
+<svg viewBox="0 0 800 1370" preserveAspectRatio="none" aria-hidden="true">
+  <!-- Freud to branch headers -->
+  <path d="M400 140 V180 H120 V220"/>
+  <path d="M400 140 V180 H260 V220"/>
+  <path d="M400 140 V220"/>
+  <path d="M400 180 H540 V220"/>
+  <path d="M400 180 H680 V220"/>
+
+  <!-- Lacan -->
+  <path d="M120 270 V620"/>
+
+  <!-- Object relations: header -> Klein; Klein -> Fairbairn/Bion; independent Winnicott influence -->
+  <path d="M260 270 V330"/>
+  <path d="M260 380 V455"/>
+  <path d="M260 505 V690"/>
+  <path class="influence" d="M260 505 H205 V610 H260"/>
+  <path class="influence" d="M260 740 V805"/>
+
+  <!-- Interpersonal -> relational -->
+  <path d="M400 270 V395"/>
+  <path d="M400 445 V900"/>
+  <path d="M400 950 V1010"/>
+  <path d="M400 1060 V1115"/>
+
+  <!-- Attachment -->
+  <path d="M540 270 V635"/>
+  <path d="M540 685 V850"/>
+  <path d="M540 900 V1170"/>
+
+  <!-- Ego/conflict/self -->
+  <path d="M680 270 V420"/>
+  <path d="M680 470 V515"/>
+  <path d="M680 565 V785"/>
+  <path d="M680 835 V895"/>
+
+  <!-- Synthesis/influences into Kernberg and relational -->
+  <path class="influence" d="M320 715 H345 V805 H320"/>
+  <path class="influence" d="M620 540 H600 V805 H320"/>
+  <path class="influence" d="M320 480 H350 V900 H340"/>
+  <path class="influence" d="M460 420 H475 V900 H460"/>
+
+  <!-- Contemporary continuation, routed outside nodes -->
+  <path class="influence" d="M400 1165 V1250"/>
+  <path class="influence" d="M540 1220 V1250 H400"/>
+  <path class="influence" d="M680 945 V1250 H400"/>
+  <path class="influence" d="M120 670 V1250 H400"/>
+</svg>
+
+<button type="button" class="node" data-id="freud" style="left:50%;top:88px"><strong>זיגמונד פרויד</strong><small>1900–1926</small></button>
+
+<div class="branch" style="left:15%;top:220px">מסלול לאקאניאני</div>
+<div class="branch" style="left:32.5%;top:220px">יחסי אובייקט והמסורת הבריטית</div>
+<div class="branch" style="left:50%;top:220px">בין־אישי והתייחסותי</div>
+<div class="branch" style="left:67.5%;top:220px">התקשרות והתפתחות</div>
+<div class="branch" style="left:85%;top:220px">אגו · קונפליקט · עצמי</div>
+
+<button type="button" class="node" data-id="klein" style="left:32.5%;top:330px"><strong>מלאני קליין</strong><small>שנות ה־20–1946</small></button>
+<button type="button" class="node" data-id="sullivan" style="left:50%;top:395px"><strong>הארי סטאק סאליבן</strong><small>שנות ה־30–1953</small></button>
+<button type="button" class="node" data-id="anna" style="left:85%;top:420px"><strong>אנה פרויד</strong><small>1936</small></button>
+
+<button type="button" class="node" data-id="fairbairn" style="left:32.5%;top:455px"><strong>רונלד פיירברן</strong><small>1940–1944</small></button>
+<button type="button" class="node" data-id="hartmann" style="left:85%;top:515px"><strong>היינץ הרטמן</strong><small>1939 ואילך</small></button>
+
+<button type="button" class="node" data-id="winnicott" style="left:32.5%;top:585px"><strong>דונלד ויניקוט</strong><small>1953–1971</small></button>
+<button type="button" class="node" data-id="lacan" style="left:15%;top:620px"><strong>ז׳אק לאקאן</strong><small>1953–1966</small></button>
+<button type="button" class="node" data-id="bowlby" style="left:67.5%;top:635px"><strong>ג׳ון בולבי</strong><small>1958–1969</small></button>
+<button type="button" class="node" data-id="bion" style="left:32.5%;top:690px"><strong>וילפרד ביון</strong><small>1959–1970</small></button>
+
+<button type="button" class="node" data-id="kohut" style="left:85%;top:785px"><strong>היינץ קוהוט</strong><small>1971–1977</small></button>
+<button type="button" class="node" data-id="kernberg" style="left:32.5%;top:805px"><strong>אוטו קרנברג</strong><small>1967–1984 · סינתזה</small></button>
+<button type="button" class="node" data-id="ainsworth" style="left:67.5%;top:850px"><strong>מרי איינסוורת׳</strong><small>1978</small></button>
+
+<button type="button" class="node" data-id="gm" style="left:50%;top:900px"><strong>גרינברג ומיטשל</strong><small>1983</small></button>
+<button type="button" class="node" data-id="brenner" style="left:85%;top:895px"><strong>ארלו וברנר</strong><small>1964–1982</small></button>
+<button type="button" class="node" data-id="mitchell" style="left:50%;top:1010px"><strong>סטיבן מיטשל</strong><small>1988–2000</small></button>
+<button type="button" class="node" data-id="benjamin" style="left:50%;top:1115px"><strong>בנג׳מין · ארון</strong><small>1988–1996</small></button>
+<button type="button" class="node" data-id="fonagy" style="left:67.5%;top:1170px"><strong>פונגי / מנטליזציה</strong><small>שנות ה־90 ואילך</small></button>
+
+<div class="branch" style="left:50%;top:1250px;width:70%">פסיכואנליזה עכשווית — המשכים ופיתוחים רב־זרמיים</div>
 </div>
-<section id="detail" class="detail" aria-live="polite"></section>
-<p class="note">הקובץ עצמאי ואינו זקוק לחיבור לאינטרנט. אפשר לשמור אותו ב‑iCloud Drive או ב‑Files ולפתוח בדפדפן.</p>
+<div class="legend">קו רציף = המשכיות מרכזית · קו מקווקו = השפעה / סינתזה בין מסורות</div>
+</div>
+
+<dialog id="info">
+<div class="modal">
+<div class="modal-top"><div><h2 id="name"></h2><div class="period" id="period"></div></div><button class="close" type="button">סגור</button></div>
+<div class="grid"><div><h3>החידוש התאורטי</h3><p id="theory"></p></div><div><h3>איך מובנת פסיכופתולוגיה?</h3><p id="path"></p></div><div><h3>המשמעות הקלינית</h3><p id="clinic"></p></div><div><h3>טקסטים מרכזיים</h3><p class="refs" id="refs"></p></div></div>
+</div>
+</dialog>
+
 <script>
 const D={
-roots:{t:"שורשים: היסטריה וטראומה",y:"1880s–1895",idea:"הסימפטום הגופני עשוי לשאת משמעות נפשית. דיבור, זיכרון וטראומה נעשים דרך לחקירת הנפש.",heal:"היזכרות, דיבור ומתן משמעות למה שלא היה ניתן לביטוי.",names:"Charcot • Breuer • Freud",books:["Breuer & Freud — Studies on Hysteria (1895)"]},
-freud:{t:"פרויד — הפסיכואנליזה הקלאסית",y:"1895–1939",idea:"לא־מודע דינמי, דחפים, קונפליקט, הדחקה, הגנות, העברה ותצורות פשרה; בהמשך המודל המבני: id–ego–superego.",heal:"אסוציאציה חופשית, פירוש התנגדות והעברה ו־working-through.",names:"Sigmund Freud",books:["The Interpretation of Dreams (1900)","Three Essays on the Theory of Sexuality (1905)","Remembering, Repeating and Working-Through (1914)","The Ego and the Id (1923)","Inhibitions, Symptoms and Anxiety (1926)"]},
-ego:{t:"פסיכולוגיית האגו",y:"1930s–1960s",idea:"האגו אינו רק משרת הדחפים: יש לו מנגנוני הגנה, יכולות הסתגלות, ויסות ובוחן מציאות.",heal:"זיהוי ופירוש הגנות והגדלת החופש של האגו להתמודד עם קונפליקט.",names:"Anna Freud • Heinz Hartmann • Ernst Kris",books:["Anna Freud — The Ego and the Mechanisms of Defence (1936)","Hartmann — Ego Psychology and the Problem of Adaptation (1939)"]},
-klein:{t:"מלאני קליין",y:"1920s–1960",idea:"עולם פנימי של אובייקטים ופנטזיות לא־מודעות; פיצול, השלכה והפנמה; העמדות הפרנואידית־סכיזואידית והדפרסיבית.",heal:"עיבוד החרדות והפנטזיות המוקדמות כפי שהן מופיעות ביחסים ובהעברה.",names:"Melanie Klein",books:["The Psycho-Analysis of Children (1932)","Notes on Some Schizoid Mechanisms (1946)","Envy and Gratitude (1957)"]},
-object:{t:"יחסי אובייקט",y:"1940s–",idea:"הקשר לאחר אינו רק אמצעי לסיפוק דחף. העצמי נבנה בתוך יחסים ומפנים יחסי עצמי–אחר.",heal:"הקשר הטיפולי מאפשר לחוות, להבין ולעבד מחדש דפוסי קשר מופנמים.",names:"Fairbairn • Winnicott • Balint",books:["Fairbairn — Psychoanalytic Studies of the Personality (1952)","Winnicott — Transitional Objects and Transitional Phenomena (1953)"]},
-lacan:{t:"לאקאן",y:"1950s–1980",idea:"הלא־מודע מובנה כשפה; הסובייקט מתהווה ביחס לאחר, למסמנים ולחסר, בתוך הממשי, הדמיוני והסמלי.",heal:"עבודה עם הדיבור, המסמנים, הפנטזמה והתשוקה והשתנות עמדת הסובייקט ביחס אליהם.",names:"Jacques Lacan",books:["The Mirror Stage (1949)","The Function and Field of Speech and Language (1953)","Seminar XI — The Four Fundamental Concepts of Psychoanalysis (1964)"]},
-attach:{t:"בולבי ותיאוריית ההתקשרות",y:"1950s–",idea:"מערכת התקשרות ביולוגית ומודלים פנימיים של עצמי ואחר מתפתחים מתוך חוויות של קרבה, זמינות וביטחון.",heal:"קשר בטוח יחסית מאפשר ויסות, חקירה ועדכון של ציפיות לגבי עצמי ואחר.",names:"John Bowlby • Mary Ainsworth",books:["Bowlby — Attachment and Loss, Vol. 1 (1969)","Ainsworth et al. — Patterns of Attachment (1978)"]},
-bion:{t:"ביון",y:"1950s–1970s",idea:"השאלה אינה רק מה נמצא בלא־מודע אלא כיצד נוצרת היכולת לחשוב. containment ו־alpha function הופכים חוויה גולמית לחוויה שניתן לחלום ולחשוב.",heal:"reverie והכלה מסייעים להפוך חוויה בלתי נסבלת לניתנת לייצוג ולחשיבה.",names:"Wilfred Bion",books:["Learning from Experience (1962)","Elements of Psycho-Analysis (1963)","Attention and Interpretation (1970)"]},
-winn:{t:"ויניקוט",y:"1940s–1970s",idea:"העצמי מתהווה בתוך facilitating environment: holding, אם טובה־דיה, true/false self, משחק ומרחב פוטנציאלי.",heal:"לא רק פירוש: holding, הישרדות המטפל והאפשרות לשחק מאפשרים התפתחות של עצמי ספונטני.",names:"D. W. Winnicott",books:["Ego Distortion in Terms of True and False Self (1960)","The Use of an Object (1969)","Playing and Reality (1971)"]},
-kohut:{t:"קוהוט — פסיכולוגיית העצמי",y:"1970s–",idea:"העצמי זקוק ללכידות וליחסי selfobject; צרכי mirroring, idealizing ו־twinship נעשים מרכזיים.",heal:"הבנה אמפתית של צרכי selfobject ועיבוד כשלים מאפשרים הפנמה והתפתחות של לכידות וויסות.",names:"Heinz Kohut",books:["The Analysis of the Self (1971)","The Restoration of the Self (1977)","How Does Analysis Cure? (1984)"]},
-kern:{t:"קרנברג",y:"1970s–",idea:"ייצוגי עצמי ואחר טעונים באפקט; ברמות ארגון נמוכות פיצול מונע אינטגרציה של ייצוגים חיוביים ושליליים ויוצר דיפוזיית זהות.",heal:"עבודה בהעברה על יחסי עצמי–אחר מפוצלים במטרה להביא לאינטגרציה.",names:"Otto Kernberg",books:["Borderline Conditions and Pathological Narcissism (1975)","Severe Personality Disorders (1984)"]},
-mental:{t:"מנטליזציה",y:"1990s–",idea:"היכולת להבין התנהגות במונחים של מצבים מנטליים של עצמי ואחר מתפתחת בתוך יחסי התקשרות ועלולה לקרוס תחת עוררות.",heal:"שיקום עמדה סקרנית ולא־יודעת כלפי המיינד של עצמי ואחר בתוך קשר בטוח יחסית.",names:"Peter Fonagy • Anthony Bateman",books:["Fonagy et al. — Affect Regulation, Mentalization and the Development of the Self (2002)"]},
-rel:{t:"פסיכואנליזה התייחסותית",y:"1980s–",idea:"הנפש נוצרת ביחסים; מטפל ומטופל משתתפים יחד בשדה, ו־enactment יכול לחשוף דפוס יחסי שנוצר ביניהם.",heal:"זיהוי ועיבוד של הדפוס המשותף ויצירת אפשרויות יחסיות חדשות בתוך הקשר הטיפולי.",names:"Stephen Mitchell • Jay Greenberg • Jessica Benjamin • Lewis Aron",books:["Greenberg & Mitchell — Object Relations in Psychoanalytic Theory (1983)","Mitchell — Relational Concepts in Psychoanalysis (1988)"]}
+freud:["זיגמונד פרויד","1900–1926","הלא־מודע הדינמי, קונפליקט, הדחקה, דחף והעברה הם תשתית המודל הפסיכואנליטי; בהמשך מעבר מן המודל הטופוגרפי למודל המבני.","סימפטום כתצורת פשרה בין משאלה, חרדה, איסור והגנה; חזרת המודחק וחזרה כפייתית.","אסוציאציה חופשית, פירוש התנגדות והעברה ו-working-through.","The Interpretation of Dreams (1900); Remembering, Repeating and Working-Through (1914); The Ego and the Id (1923); Inhibitions, Symptoms and Anxiety (1926)."],
+klein:["מלאני קליין","שנות ה־20–1946","פנטזיה לא־מודעת, אובייקטים פנימיים, פיצול, הזדהות השלכתית והעמדות הפרנואידית־סכיזואידית והדפרסיבית.","חרדות פרימיטיביות וקושי לשלב אהבה ושנאה כלפי אותו אובייקט משמרים פיצול והשלכה.","יחסי האובייקט הפנימיים נעשים חיים בהעברה; מפרשים חרדה, פיצול והשלכה בתוך היחסים.","The Psycho-Analysis of Children (1932); Notes on Some Schizoid Mechanisms (1946); Envy and Gratitude (1957)."],
+fairbairn:["רונלד פיירברן","1940–1944","הליבידו הוא object-seeking: חיפוש קשר הוא מניע מרכזי, ולא רק חיפוש עונג.","הילד מפנים קשרים עם אובייקטים מתסכלים; האגו מתפצל סביב יחסי אובייקט פנימיים.","בוחנים אילו קשרים פנימיים משתחזרים ומדוע קשר מכאיב מוכר עשוי להישמר.","Schizoid Factors in the Personality (1940); Endopsychic Structure Considered in Terms of Object-Relationships (1944); Psychoanalytic Studies of the Personality (1952)."],
+winnicott:["דונלד ויניקוט","1953–1971","holding, facilitating environment, good-enough mother, true/false self, תופעות מעבר ומשחק.","כשל סביבתי ו-impingement עלולים להביא להתאמה הגנתית ולארגון false self.","סביבה טיפולית אמינה ויכולת לשחק עשויות להיות תנאי לפירוש ולעבודה עמוקה יותר.","Transitional Objects and Transitional Phenomena (1953); Ego Distortion in Terms of True and False Self (1960); Playing and Reality (1971)."],
+bion:["וילפרד ביון","1959–1970","הרחבת החשיבה הקלייניאנית לתאוריה של חשיבה: alpha function, beta elements ו-container/contained.","חוויה שאינה ניתנת לעיבוד עלולה להיות מפונה באמצעות פיצול והזדהות השלכתית במקום להפוך למחשבה.","המטפל מנסה לשאת ולעבד חוויה גולמית ולאפשר לה להפוך לניתנת לחשיבה; בהמשך ביון מדגיש גם סובלנות לאי־ידיעה.","Learning from Experience (1962); Elements of Psycho-Analysis (1963); Attention and Interpretation (1970)."],
+sullivan:["הארי סטאק סאליבן","שנות ה־30–1953","האישיות מובנת כדפוסים בין־אישיים; המטפל הוא participant observer ולא צופה ניטרלי מחוץ לשדה.","חרדה ודפוסי עצמי מתארגנים בתוך יחסים ונשמרים באמצעות פעולות ביטחון.","בודקים מה מתרחש בפועל ביחסי המטפל והמטופל ולא רק עולם פנימי המושלך על המטפל.","The Interpersonal Theory of Psychiatry (1953)."],
+anna:["אנה פרויד","1936","האגו ומנגנוני ההגנה שלו עוברים לקדמת הבמה.","הגנות מגינות מפני חרדה וסכנה אך כשהן נוקשות הן מצמצמות גמישות.","מזהים את ההגנה ואת החרדה או הסכנה הנפשית שהיא מנסה למנוע.","The Ego and the Mechanisms of Defence (1936)."],
+hartmann:["היינץ הרטמן","1939 ואילך","לאגו יש גם תפקודים אוטונומיים יחסית וקיימת חשיבות להסתגלות למציאות.","קושי נפשי עשוי לערב תפקודי אגו והסתגלות ולא רק קונפליקט דחפי.","בוחנים כוחות אגו, ויסות, שיפוט מציאות והסתגלות לצד קונפליקט.","Ego Psychology and the Problem of Adaptation (1939)."],
+lacan:["ז׳אק לאקאן","1953–1966","קריאה מחודשת בפרויד דרך בלשנות סטרוקטורלית: הלא־מודע מובנה כשפה; הסמלי, הדמיוני והממשי; תשוקה, חסר והאחר.","הסימפטום נבחן גם כמבנה של מסמנים ומשמעות וכקשור ל-jouissance ולעמדת הסובייקט ביחס לאחר.","מקשיבים למסמנים, חזרות, דו־משמעות, פליטות וסתירות ולעמדה שממנה הסובייקט מדבר.","The Function and Field of Speech and Language in Psychoanalysis (1953); Seminar XI (1964); Écrits (1966)."],
+bowlby:["ג׳ון בולבי","1958–1969","מערכת ההתקשרות, secure base ו-internal working models; שילוב שאלות פסיכואנליטיות עם אתולוגיה וחשיבה אבולוציונית.","חוויות חוזרות של זמינות, דחייה או איום מעצבות ציפיות לגבי עצמי ואחר ואסטרטגיות לוויסות קרבה.","הטיפול יכול לשמש secure base לבחינת ציפיות לגבי קרבה, פרידה ותלות.","The Nature of the Child’s Tie to His Mother (1958); Attachment and Loss, Vol. 1 (1969)."],
+kernberg:["אוטו קרנברג","1967–1984","סינתזה של פסיכולוגיית האגו ויחסי אובייקט קלייניאניים: דיאדות עצמי־אחר, identity diffusion ורמות ארגון אישיות.","בארגון אישיות גבולי ייצוגים חיוביים ושליליים נשארים מפוצלים ומופעלות הגנות פרימיטיביות.","ב-TFP עוקבים אחר דיאדות עצמי־אחר המופעלות בהעברה ומשתמשים בהבהרה, עימות ופירוש כדי לקדם אינטגרציה.","Borderline Personality Organization (1967); Borderline Conditions and Pathological Narcissism (1975); Object Relations Theory and Clinical Psychoanalysis (1976)."],
+kohut:["היינץ קוהוט","1971–1977","לכידות העצמי וצורכי selfobject — שיקוף, אידאליזציה ובהמשך twinship — עוברים למרכז.","כשלים מתמשכים במענה לצורכי selfobject עשויים להשאיר עצמי פגיע ופחות לכיד.","אמפתיה היא דרך חקירה מרכזית; עובדים עם העברות selfobject ועם פגיעות העצמי.","The Analysis of the Self (1971); The Restoration of the Self (1977)."],
+ainsworth:["מרי איינסוורת׳","1978","ה-Strange Situation סיפק מסגרת אמפירית לחקר דפוסי התקשרות; עבודתה תרמה גם למושג secure base ולמחקר רגישות אימהית.","דפוסי התקשרות הם אסטרטגיות מאורגנות ביחס למצוקה ולזמינות הדמות המטפלת, לא אבחנות אישיות קבועות.","עדשה להבנת קרבה, פרידה וויסות מצוקה בלי להפוך attachment style לתווית כוללת.","Ainsworth et al., Patterns of Attachment (1978)."],
+gm:["גרינברג ומיטשל","1983","צומת תאורטי המחבר בין מסורות יחסי אובייקט למסורת הבין־אישית ומכין את הקרקע לפסיכואנליזה ההתייחסותית.","פסיכופתולוגיה ניתנת להבנה גם כהתקבעות בתצורות יחסים ולא רק כקונפליקט דחפי.","מעבר מחשיבה חד־אישית לבחינה רחבה יותר של יחסים פנימיים וממשיים.","Object Relations in Psychoanalytic Theory (1983)."],
+brenner:["ארלו וברנר","1964–1982","Modern Conflict Theory מדגישה תצורות פשרה משתנות בין משאלה, חרדה, הגנה, מצפון ומציאות.","סימפטום עשוי בעת ובעונה אחת לספק משאלה, להגן מפניה ולהעניש עליה.","מחפשים את הקונפליקט ואת תצורת הפשרה הפעילים ברגע נתון.","Arlow & Brenner, Psychoanalytic Concepts and the Structural Theory (1964); Brenner, The Mind in Conflict (1982)."],
+mitchell:["סטיבן מיטשל","1988–2000","ה-relational matrix: העצמי והחוויה הנפשית מאורגנים בתוך תצורות של יחסים; שילוב בין המסורת הבין־אישית, יחסי אובייקט והשפעות נוספות.","דפוסי קשר מכאיבים יכולים להשתחזר משום שהם משמרים דרך מוכרת להיות עם אחר ולחוות את העצמי.","העברה והעברה־נגדית הן חלק משדה דו־אישי; בוחנים enactment ואת השתתפות המטפל במה שנוצר.","Relational Concepts in Psychoanalysis (1988); Hope and Dread in Psychoanalysis (1993); Influence and Autonomy in Psychoanalysis (1997)."],
+benjamin:["ג׳סיקה בנג׳מין · לואיס ארון","1988–1996","בנג׳מין מדגישה recognition — הכרה באחר כסובייקט נפרד; ארון מפתח two-person psychology והדדיות שאינה סימטריה.","יחסים יכולים לקרוס למבנה doer/done-to שבו קשה להחזיק שתי סובייקטיביויות.","עבודה עם rupture, enactment והשתתפות המטפל תוך שמירה על האסימטריה והאחריות הטיפולית.","Benjamin, The Bonds of Love (1988); Recognition and Destruction (1990); Aron, A Meeting of Minds (1996)."],
+fonagy:["פונגי / מנטליזציה","שנות ה־90 ואילך","חיבור בין התקשרות, פסיכואנליזה ומחקר התפתחותי; מנטליזציה היא הבנת התנהגות דרך מצבים מנטליים תוך הכרה באי־ודאות לגבי תודעת האחר.","עוררות גבוהה, במיוחד בהקשרי התקשרות, יכולה להביא לקריסה זמנית של מנטליזציה.","ב-MBT מזהים את נקודת אובדן המנטליזציה ומנסים להשיב עמדה סקרנית של not-knowing.","Fonagy et al., Affect Regulation, Mentalization and the Development of the Self (2002); Bateman & Fonagy, Psychotherapy for Borderline Personality Disorder (2004)."]
 };
-const box=document.getElementById("detail");
-function show(id){const d=D[id];document.querySelectorAll(".node").forEach(n=>n.classList.toggle("active",n.dataset.id===id));box.innerHTML=`<div class="top"><h2>${d.t}</h2><span class="years">${d.y}</span></div><div class="grid"><div><h3>הרעיון המרכזי</h3><p>${d.idea}</p><h3 style="margin-top:14px">מה מרפא?</h3><p>${d.heal}</p></div><div><h3>דמויות מרכזיות</h3><p>${d.names}</p><h3 style="margin-top:14px">טקסטים מרכזיים</h3><ul class="books">${d.books.map(x=>`<li>${x}</li>`).join("")}</ul></div></div>`}
-document.querySelectorAll(".node").forEach(n=>{n.addEventListener("click",()=>show(n.dataset.id));n.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();show(n.dataset.id)}})});
-show("freud");
+
+const dlg=document.getElementById("info");
+const fields=["name","period","theory","path","clinic","refs"];
+document.querySelectorAll(".node").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+   const x=D[btn.dataset.id];
+   document.querySelectorAll(".node").forEach(n=>n.classList.remove("active"));
+   btn.classList.add("active");
+   fields.forEach((id,i)=>document.getElementById(id).textContent=x[i]);
+   if(typeof dlg.showModal==="function") dlg.showModal(); else dlg.setAttribute("open","");
+ });
+});
+function closeDlg(){ if(typeof dlg.close==="function") dlg.close(); else dlg.removeAttribute("open"); document.querySelectorAll(".node").forEach(n=>n.classList.remove("active")); }
+document.querySelector(".close").addEventListener("click",closeDlg);
+dlg.addEventListener("click",e=>{if(e.target===dlg)closeDlg();});
 </script>
-</main></body></html>
+</body>
+</html>
